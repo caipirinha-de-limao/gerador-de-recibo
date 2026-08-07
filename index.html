@@ -22,9 +22,11 @@ body {
     max-width: 780px;
     border-radius: 28px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    padding: 40px 45px 120px 45px; /* MUITO espaço embaixo para não sobrepor */
-    position: relative; /* para a assinatura fixed dentro */
+    padding: 40px 45px 150px 45px; /* padding inferior enorme */
+    position: relative;
     min-height: 700px;
+    display: flex;
+    flex-direction: column;
 }
 .header {
     display: flex;
@@ -38,7 +40,7 @@ body {
 .header h1 span { background: #0b1a2e; color: white; padding: 2px 14px; border-radius: 40px; font-size: 18px; font-weight: 600; }
 .badge { background: #e8edf3; color: #1e3a5f; padding: 6px 18px; border-radius: 40px; font-size: 13px; font-weight: 600; }
 
-.form-grid { display: flex; flex-direction: column; gap: 16px; }
+.form-grid { display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; }
 .field-row { display: flex; align-items: center; gap: 16px; }
 .field-row label { width: 200px; font-weight: 600; font-size: 14px; color: #1e2a3a; flex-shrink: 0; }
 .field-row input, .field-row textarea {
@@ -69,18 +71,19 @@ body {
     font-size: 15px;
     line-height: 1.6;
     text-align: justify;
+    flex-shrink: 0;
 }
 
-/* --- ASSINATURA FIXA NO RODAPÉ --- */
+/* --- ASSINATURA - COLADA NO FUNDO --- */
 .signature-block {
     position: absolute;
-    bottom: 30px;
+    bottom: 10px;          /* quase no limite */
     left: 45px;
     right: 45px;
     text-align: center;
     padding-top: 15px;
     border-top: 1px dashed #d0d8e0;
-    background: white; /* para tampar o que estiver atrás */
+    background: white;
 }
 .signature-line {
     width: 280px;
@@ -122,12 +125,15 @@ body {
     .main-card {
         box-shadow: none;
         border-radius: 0;
-        padding: 25px 35px 100px 35px; /* padding extra para a assinatura */
+        padding: 25px 35px 120px 35px; /* padding inferior enorme no PDF também */
         max-width: 100%;
         border: none;
         height: 100vh;
         min-height: 100vh;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* não use space-between para não atrapalhar o absolute */
     }
     .btn-generate { display: none !important; }
     .field-row input, .field-row textarea {
@@ -138,7 +144,7 @@ body {
     .badge { display: none; }
     .signature-block {
         position: absolute;
-        bottom: 25px;
+        bottom: 10px;   /* mais próximo do rodapé */
         left: 35px;
         right: 35px;
         border-top: 1px dashed #999;
@@ -147,17 +153,17 @@ body {
     .signature-block::after {
         content: "";
         display: block;
-        height: 40px; /* espaço para carimbo */
+        height: 50px; /* ainda mais espaço para carimbo */
     }
 }
 
 @media (max-width: 650px) {
-    .main-card { padding: 20px 20px 120px 20px; min-height: auto; }
+    .main-card { padding: 20px 20px 150px 20px; min-height: auto; }
     .header { flex-direction: column; align-items: flex-start; gap: 8px; }
     .header h1 { font-size: 22px; }
     .field-row { flex-direction: column; align-items: stretch; gap: 5px; }
     .field-row label { width: 100%; }
-    .signature-block { left: 20px; right: 20px; bottom: 15px; }
+    .signature-block { left: 20px; right: 20px; bottom: 10px; }
 }
 
 /* ========== MODAL ========== */
@@ -240,7 +246,7 @@ body {
         referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
     </div>
 
-    <!-- Assinatura com position: absolute -->
+    <!-- Assinatura -->
     <div class="signature-block">
         <div class="signature-line"></div>
         <span class="signature-label">Assinatura do emitente</span>
