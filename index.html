@@ -25,7 +25,7 @@ html, body {
     padding: 40px 45px 30px 45px;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;          /* para visualização em tela */
+    min-height: 90vh;          /* menos que 100vh para evitar corte no topo */
     position: relative;
 }
 .header {
@@ -75,7 +75,7 @@ html, body {
 
 /* --- ASSINATURA NO FINAL DA PÁGINA (flex) --- */
 .signature-block {
-    margin-top: auto;          /* empurra para o final */
+    margin-top: auto;
     text-align: center;
     padding-top: 20px;
     background: white;
@@ -96,9 +96,10 @@ html, body {
 }
 
 .btn-generate {
-    margin-top: 20px;
-    width: 100%;
+    margin: 20px 0 40px 0;      /* margem inferior para não colar na borda */
     padding: 16px;
+    width: 100%;
+    max-width: 780px;
     background: #0b1a2e;
     color: white;
     border: none;
@@ -107,7 +108,6 @@ html, body {
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(11,26,46,0.25);
-    max-width: 780px;
 }
 .btn-generate:hover { background: #142c47; transform: scale(1.01); }
 
@@ -122,38 +122,70 @@ html, body {
     .main-card {
         box-shadow: none;
         border-radius: 0;
-        padding: 20px 35px 15px 35px;  /* reduzido para caber */
+        padding: 8px 25px 8px 25px;   /* reduzido ao máximo para caber */
         max-width: 100%;
         border: none;
-        height: 100%;                 /* ocupa exatamente a página */
-        min-height: 0;                /* remove o mínimo extra */
+        height: 100%;
+        min-height: 0;
         display: flex;
         flex-direction: column;
+        justify-content: flex-start;
     }
     .btn-generate { display: none !important; }
+    .badge { display: none; }
+
+    .header {
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+    }
+    .header h1 { font-size: 22px; }
+    .header h1 span { font-size: 15px; padding: 0 10px; }
+
+    .form-grid { gap: 6px; }
+    .field-row { gap: 8px; }
+    .field-row label {
+        width: 140px;
+        font-size: 11px;
+        font-weight: 600;
+    }
     .field-row input, .field-row textarea {
+        padding: 5px 8px;
+        font-size: 12px;
         border: 1px solid #aaa;
         background: white;
         box-shadow: none;
     }
-    .badge { display: none; }
+    .field-row input[type="date"] { font-size: 12px; }
+
+    .formal-declaration {
+        margin: 8px 0 6px 0;
+        padding: 8px 14px;
+        font-size: 12px;
+        line-height: 1.4;
+        border-left-width: 3px;
+    }
+
     .signature-block {
         margin-top: auto;
-        background: white;
         padding-top: 10px;
     }
     .signature-line {
-        width: 200px;               /* um pouco menor para caber */
+        width: 180px;
+        height: 1.5px;
+    }
+    .signature-label {
+        font-size: 10px;
+        letter-spacing: 1px;
     }
 }
 
 @media (max-width: 650px) {
-    .main-card { padding: 20px 20px 20px 20px; min-height: auto; }
+    .main-card { padding: 20px; min-height: auto; }
     .header { flex-direction: column; align-items: flex-start; gap: 8px; }
     .header h1 { font-size: 22px; }
     .field-row { flex-direction: column; align-items: stretch; gap: 5px; }
     .field-row label { width: 100%; }
-    .btn-generate { max-width: 100%; }
+    .btn-generate { max-width: 100%; margin-bottom: 20px; }
 }
 
 /* ========== MODAL ========== */
@@ -333,10 +365,10 @@ function gerarEAbrirPDF() {
     }
     const element = document.getElementById('receipt-container');
     const opt = {
-        margin: [0.6, 0.6, 0.6, 0.6],
+        margin: [0.5, 0.5, 0.5, 0.5],   // margens reduzidas para aproveitar espaço
         filename: 'recibo_oficial.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2.5, letterRendering: true, useCORS: true, logging: false },
+        html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).outputPdf('blob').then(function(blob) {
