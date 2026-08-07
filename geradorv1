@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador Profissional de Recibo</title>
+    <style>
+        /* --- Reset e Estilo Global --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f4f7fc 0%, #e9edf3 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px 15px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+        }
+
+        /* --- Card Principal (moderno) --- */
+        .main-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 780px;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 40px 45px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(2px);
+        }
+
+        /* --- Cabeçalho --- */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eef2f6;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b1a2e;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 span {
+            background: #0b1a2e;
+            color: white;
+            font-size: 18px;
+            padding: 2px 14px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: #e8edf3;
+            color: #1e3a5f;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* --- Grid do Formulário (layout clean) --- */
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .field-row label {
+            width: 180px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e2a3a;
+            letter-spacing: 0.2px;
+            flex-shrink: 0;
+        }
+
+        .field-row input,
+        .field-row textarea {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid #dce3ec;
+            border-radius: 12px;
+            font-size: 15px;
+            color: #0b1a2e;
+            background: #fafcfe;
+            transition: 0.2s;
+            font-family: inherit;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .field-row input:focus,
+        .field-row textarea:focus {
+            outline: none;
+            border-color: #1e3a5f;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .field-row textarea {
+            resize: vertical;
+            min-height: 44px;
+        }
+
+        /* --- Declaração Formal --- */
+        .formal-declaration {
+            margin: 28px 0 10px 0;
+            padding: 20px 24px;
+            background: #f8faff;
+            border-radius: 16px;
+            border-left: 5px solid #1e3a5f;
+            color: #1a2b3e;
+            font-size: 15px;
+            line-height: 1.7;
+            font-weight: 450;
+            text-align: justify;
+            border: 1px solid #e9eef3;
+            border-left-width: 5px;
+        }
+
+        /* --- Área de Assinatura --- */
+        .signature-block {
+            margin-top: 35px;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .signature-line {
+            width: 280px;
+            height: 2px;
+            background: #1e3a5f;
+            margin: 0 auto 8px auto;
+            border-radius: 4px;
+        }
+
+        .signature-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #5d7188;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* --- Botão Gerar (único, estiloso) --- */
+        .btn-generate {
+            margin-top: 35px;
+            width: 100%;
+            padding: 16px 20px;
+            background: #0b1a2e;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 24px rgba(11, 26, 46, 0.25);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-generate:hover {
+            background: #142c47;
+            transform: scale(1.01);
+            box-shadow: 0 12px 34px rgba(11, 26, 46, 0.35);
+        }
+
+        .btn-generate:active {
+            transform: scale(0.97);
+        }
+
+        /* --- Ajuste para impressão (esconde botão e inputs) --- */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .main-card {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 25px 30px;
+                max-width: 100%;
+                border: none;
+            }
+            .btn-generate {
+                display: none !important;
+            }
+            .field-row input,
+            .field-row textarea {
+                border: 1px solid #ccc;
+                background: white;
+                box-shadow: none;
+            }
+            .header .badge {
+                display: none;
+            }
+        }
+
+        /* --- Responsividade Mobile --- */
+        @media (max-width: 650px) {
+            .main-card {
+                padding: 22px 18px;
+                border-radius: 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+            .field-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 5px;
+            }
+            .field-row label {
+                width: 100%;
+                font-size: 13px;
+            }
+            .field-row input,
+            .field-row textarea {
+                font-size: 16px;
+                /* Evita zoom no iOS */
+                padding: 11px 14px;
+            }
+            .formal-declaration {
+                padding: 16px;
+                font-size: 14px;
+            }
+            .signature-line {
+                width: 200px;
+            }
+            .btn-generate {
+                font-size: 16px;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-card" id="receipt-container">
+        <!-- Cabeçalho sem emojis -->
+        <div class="header">
+            <h1>
+                Recibo
+                <span>PDF</span>
+            </h1>
+            <span class="badge">Comprovante digital</span>
+        </div>
+
+        <!-- Formulário -->
+        <div class="form-grid">
+            <div class="field-row">
+                <label>Recebido de:</label>
+                <input type="text" id="nomePagador" placeholder="Nome completo / Razão social do pagador">
+            </div>
+
+            <div class="field-row">
+                <label>CPF / CNPJ (pagador):</label>
+                <input type="text" id="cpfPagador" placeholder="Ex: 000.000.000-00 ou 00.000.000/0000-00">
+            </div>
+
+            <div class="field-row">
+                <label>Valor pago (R$):</label>
+                <input type="text" id="valor" placeholder="0,00" value="0,00">
+            </div>
+
+            <div class="field-row">
+                <label>Referente a:</label>
+                <input type="text" id="referente" placeholder="Descrição da obrigação / serviço / produto">
+            </div>
+
+            <div class="field-row">
+                <label>Data do pagamento:</label>
+                <input type="date" id="dataPagamento">
+            </div>
+
+            <div class="field-row">
+                <label>Emitente (Razão Social):</label>
+                <input type="text" id="meuNome" placeholder="Nome da empresa ou pessoa que emite o recibo">
+            </div>
+
+            <div class="field-row">
+                <label>CPF / CNPJ (emitente):</label>
+                <input type="text" id="meuCpf" placeholder="Ex: 000.000.000-00 ou 00.000.000/0000-00">
+            </div>
+        </div>
+
+        <!-- Declaração formal -->
+        <div class="formal-declaration">
+            <strong>Declaração:</strong> Para os devidos fins, declaro que recebi o valor supra mencionado, 
+            referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
+        </div>
+
+        <!-- Assinatura -->
+        <div class="signature-block">
+            <div class="signature-line"></div>
+            <span class="signature-label">Assinatura do emitente</span>
+        </div>
+    </div>
+
+    <!-- Botão ÚNICO com texto "Gerar recibo" -->
+    <button class="btn-generate" onclick="gerarEAbrirPDF()">
+        Gerar recibo
+    </button>
+
+    <!-- Biblioteca html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+    </script>
+
+    <script>
+        // Preenche a data automaticamente com o dia atual
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataPagamento').value = hoje;
+        });
+
+        // Função principal: gera o PDF, cria um link e abre em nova aba
+        function gerarEAbrirPDF() {
+            const element = document.getElementById('receipt-container');
+
+            // Opções de qualidade e formato A4
+            const opt = {
+                margin: [0.6, 0.6, 0.6, 0.6],
+                filename: 'recibo_oficial.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2.5,
+                    letterRendering: true,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
+
+            // Gera o PDF como Blob
+            html2pdf().set(opt).from(element).outputPdf('blob').then(function(blob) {
+                // Cria uma URL para o blob
+                const url = URL.createObjectURL(blob);
+
+                // Abre em uma nova aba (redirecionamento automático)
+                const novaAba = window.open(url, '_blank');
+
+                // Se o navegador bloquear pop-ups, fallback para download direto
+                if (!novaAba || novaAba.closed || typeof novaAba.closed == 'undefined') {
+                    // Fallback: baixa diretamente
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'recibo_oficial.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    // Libera a URL depois de um tempo
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
+                } else {
+                    // Se abriu, libera a URL depois de um tempo
+                    setTimeout(() => URL.revokeObjectURL(url), 10000);
+                }
+            }).catch(function(error) {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Ocorreu um erro ao gerar o PDF. Verifique o console para mais detalhes.');
+            });
+        }
+    </script>
+
+</body>
+</html>
