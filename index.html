@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Recibos</title>
     <style>
-        /* Reset e fonte global */
+        /* Reset */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -22,21 +22,21 @@
             min-height: 100vh;
         }
 
-        /* --- Card principal com flex column --- */
+        /* Container principal com flex column e altura mínima */
         .main-card {
             background: white;
             width: 100%;
             max-width: 780px;
             border-radius: 28px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            padding: 40px 45px 30px 45px;
+            padding: 40px 45px 20px 45px;
             display: flex;
             flex-direction: column;
-            min-height: 650px;   /* garante altura mínima */
-            justify-content: space-between; /* empurra a assinatura para baixo */
+            min-height: 650px;   /* altura mínima para dar espaço */
+            /* No PDF, será substituído por height: 100vh */
         }
 
-        /* --- Cabeçalho --- */
+        /* Cabeçalho */
         .header {
             display: flex;
             justify-content: space-between;
@@ -44,6 +44,7 @@
             border-bottom: 2px solid #eef2f6;
             padding-bottom: 18px;
             margin-bottom: 28px;
+            flex-shrink: 0;
         }
         .header h1 {
             font-size: 26px;
@@ -67,12 +68,12 @@
             font-weight: 600;
         }
 
-        /* --- Formulário (cresce para ocupar espaço) --- */
+        /* Formulário */
         .form-grid {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            flex: 1;  /* ocupa o espaço disponível */
+            flex-shrink: 0;  /* não encolhe */
         }
         .field-row {
             display: flex;
@@ -109,9 +110,9 @@
             box-shadow: 0 0 0 4px rgba(30,58,95,0.08);
         }
 
-        /* --- Declaração (agora com padding adequado) --- */
+        /* Declaração */
         .formal-declaration {
-            margin: 18px 0 15px 0;
+            margin: 18px 0 12px 0;
             padding: 16px 22px;
             background: #f8faff;
             border-left: 5px solid #1e3a5f;
@@ -121,16 +122,22 @@
             font-size: 15px;
             line-height: 1.6;
             text-align: justify;
-            flex-shrink: 0;  /* não encolhe */
+            flex-shrink: 0;
         }
 
-        /* --- Assinatura (agora com margin-top: auto e sem position) --- */
+        /* --- BLOCO INVISÍVEL PARA EMPURRAR A ASSINATURA --- */
+        .spacer {
+            flex: 1;            /* ocupa todo o espaço disponível */
+            min-height: 20px;   /* garante que exista */
+        }
+
+        /* Assinatura */
         .signature-block {
-            margin-top: 20px;        /* espaço antes da linha */
+            margin-top: 10px;
             padding-top: 20px;
             text-align: center;
             border-top: 1px dashed #d0d8e0;
-            flex-shrink: 0;          /* não encolhe */
+            flex-shrink: 0;     /* não encolhe */
         }
         .signature-line {
             width: 280px;
@@ -147,7 +154,7 @@
             letter-spacing: 1.5px;
         }
 
-        /* --- Botão Gerar --- */
+        /* Botão */
         .btn-generate {
             margin-top: 35px;
             width: 100%;
@@ -166,7 +173,7 @@
             transform: scale(1.01);
         }
 
-        /* ========== ESTILOS PARA IMPRESSÃO (PDF) ========== */
+        /* ========== CONFIGURAÇÃO PARA IMPRESSÃO (PDF) ========== */
         @media print {
             body {
                 background: white;
@@ -176,14 +183,14 @@
             .main-card {
                 box-shadow: none;
                 border-radius: 0;
-                padding: 25px 35px 25px 35px;
+                padding: 25px 35px 20px 35px;
                 max-width: 100%;
                 border: none;
-                height: 100vh;            /* ocupa toda a altura da página */
+                height: 100vh;            /* ocupa toda a página */
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between; /* empurra assinatura para baixo */
+                justify-content: space-between; /* empurra tudo para as pontas */
             }
             .btn-generate {
                 display: none !important;
@@ -197,6 +204,10 @@
             .badge {
                 display: none;
             }
+            .spacer {
+                flex: 1;                /* ocupa o máximo de espaço */
+                min-height: 40px;       /* garante espaço */
+            }
             .signature-block {
                 margin-top: 0;
                 padding-top: 20px;
@@ -205,16 +216,15 @@
             .signature-block::after {
                 content: "";
                 display: block;
-                height: 50px; /* espaço extra para carimbo */
+                height: 50px;           /* espaço extra para carimbo */
             }
         }
 
-        /* --- Responsivo --- */
+        /* Responsivo */
         @media (max-width: 650px) {
             .main-card {
                 padding: 20px;
                 min-height: auto;
-                justify-content: flex-start;
             }
             .header {
                 flex-direction: column;
@@ -232,12 +242,12 @@
             .field-row label {
                 width: 100%;
             }
-            .signature-block {
-                margin-top: 25px;
+            .spacer {
+                min-height: 10px;
             }
         }
 
-        /* ========== MODAL PERSONALIZADO ========== */
+        /* ========== MODAL ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -289,7 +299,7 @@
 </head>
 <body>
 
-<!-- Modal customizado -->
+<!-- Modal -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-box">
         <h3 id="modalTitle">Aviso</h3>
@@ -298,7 +308,7 @@
     </div>
 </div>
 
-<!-- Card principal -->
+<!-- Container principal -->
 <div class="main-card" id="receipt-container">
     <div class="header">
         <h1>Recibo <span>PDF</span></h1>
@@ -341,7 +351,10 @@
         referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
     </div>
 
-    <!-- Assinatura agora com margin-top automático e sem position -->
+    <!-- BLOCO INVISÍVEL (spacer) para empurrar a assinatura para baixo -->
+    <div class="spacer"></div>
+
+    <!-- Assinatura -->
     <div class="signature-block">
         <div class="signature-line"></div>
         <span class="signature-label">Assinatura do emitente</span>
@@ -353,7 +366,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
-    // ========== MODAL PERSONALIZADO ==========
+    // ========== MODAL ==========
     function mostrarModal(mensagem) {
         document.getElementById('modalMessage').textContent = mensagem;
         document.getElementById('modalOverlay').style.display = 'flex';
@@ -411,10 +424,8 @@
 
     // ========== INICIALIZAÇÃO ==========
     document.addEventListener('DOMContentLoaded', function() {
-        // Data atual
         document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
 
-        // Máscara e validação (sem loop)
         const campos = ['cpfPagador', 'meuCpf'];
         campos.forEach(id => {
             const campo = document.getElementById(id);
@@ -429,7 +440,6 @@
             });
         });
 
-        // Formatação do valor (duas casas)
         document.getElementById('valor').addEventListener('blur', function() {
             let v = this.value.replace(',', '.').replace(/[^0-9.]/g, '');
             let num = parseFloat(v);
@@ -439,7 +449,6 @@
 
     // ========== GERAR PDF ==========
     function gerarEAbrirPDF() {
-        // Validação final
         const campos = ['cpfPagador', 'meuCpf'];
         for (let id of campos) {
             const campo = document.getElementById(id);
