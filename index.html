@@ -25,7 +25,7 @@ html, body {
     padding: 40px 45px 30px 45px;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;          /* ocupa toda a altura da viewport */
+    min-height: 100vh;          /* para visualização em tela */
     position: relative;
 }
 .header {
@@ -78,7 +78,7 @@ html, body {
     margin-top: auto;          /* empurra para o final */
     text-align: center;
     padding-top: 20px;
-    background: white;         /* para não transparecer */
+    background: white;
 }
 .signature-line {
     width: 280px;
@@ -122,11 +122,11 @@ html, body {
     .main-card {
         box-shadow: none;
         border-radius: 0;
-        padding: 25px 35px 30px 35px;
+        padding: 20px 35px 15px 35px;  /* reduzido para caber */
         max-width: 100%;
         border: none;
-        height: 100%;           /* ocupa a página inteira */
-        min-height: 100%;
+        height: 100%;                 /* ocupa exatamente a página */
+        min-height: 0;                /* remove o mínimo extra */
         display: flex;
         flex-direction: column;
     }
@@ -140,6 +140,10 @@ html, body {
     .signature-block {
         margin-top: auto;
         background: white;
+        padding-top: 10px;
+    }
+    .signature-line {
+        width: 200px;               /* um pouco menor para caber */
     }
 }
 
@@ -232,7 +236,7 @@ html, body {
         referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
     </div>
 
-    <!-- Assinatura agora empurrada pelo margin-top:auto -->
+    <!-- Assinatura no final -->
     <div class="signature-block">
         <div class="signature-line"></div>
         <span class="signature-label">Assinatura do emitente</span>
