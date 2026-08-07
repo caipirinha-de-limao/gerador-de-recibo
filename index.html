@@ -5,65 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Recibos</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: linear-gradient(145deg, #f4f7fc 0%, #e9edf3 100%);
-            min-height: 100vh;
+            background: #e9edf3;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 25px 15px;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
+            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
         }
 
         .main-card {
-            background: #ffffff;
+            background: white;
             width: 100%;
             max-width: 780px;
             border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            padding: 40px 45px 30px 45px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            padding: 40px 45px 20px 45px;
             display: flex;
             flex-direction: column;
-            min-height: 650px;
+            min-height: 650px; /* altura mínima para dar espaço */
         }
 
         .header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 28px;
-            padding-bottom: 18px;
+            align-items: center;
             border-bottom: 2px solid #eef2f6;
+            padding-bottom: 18px;
+            margin-bottom: 28px;
         }
 
         .header h1 {
             font-size: 26px;
             font-weight: 700;
             color: #0b1a2e;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
         }
-
         .header h1 span {
             background: #0b1a2e;
             color: white;
-            font-size: 18px;
             padding: 2px 14px;
             border-radius: 40px;
+            font-size: 18px;
             font-weight: 600;
         }
-
         .badge {
             background: #e8edf3;
             color: #1e3a5f;
@@ -71,14 +59,13 @@
             border-radius: 40px;
             font-size: 13px;
             font-weight: 600;
-            letter-spacing: 0.3px;
         }
 
         .form-grid {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            flex: 1;  /* ocupa o espaço disponível */
+            flex: 1;
         }
 
         .field-row {
@@ -86,63 +73,47 @@
             align-items: center;
             gap: 16px;
         }
-
         .field-row label {
             width: 200px;
-            font-size: 14px;
             font-weight: 600;
+            font-size: 14px;
             color: #1e2a3a;
             flex-shrink: 0;
         }
-
-        .field-row input,
-        .field-row textarea {
+        .field-row input, .field-row textarea {
             flex: 1;
             padding: 12px 16px;
             border: 1.5px solid #dce3ec;
             border-radius: 12px;
             font-size: 15px;
-            color: #0b1a2e;
             background: #fafcfe;
-            transition: 0.2s;
-            font-family: inherit;
         }
-
-        .field-row input:focus,
-        .field-row textarea:focus {
+        .field-row input:focus, .field-row textarea:focus {
             outline: none;
             border-color: #1e3a5f;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(30, 58, 95, 0.08);
-        }
-
-        .field-row textarea {
-            resize: vertical;
-            min-height: 44px;
+            box-shadow: 0 0 0 4px rgba(30,58,95,0.08);
         }
 
         .formal-declaration {
             margin: 18px 0 12px 0;
             padding: 16px 22px;
             background: #f8faff;
-            border-radius: 16px;
             border-left: 5px solid #1e3a5f;
-            color: #1a2b3e;
+            border-radius: 16px;
+            border: 1px solid #e9eef3;
+            border-left-width: 5px;
             font-size: 15px;
             line-height: 1.6;
             text-align: justify;
-            border: 1px solid #e9eef3;
-            border-left-width: 5px;
         }
 
-        /* --- ASSINATURA - agora com margin-top: auto --- */
+        /* ASSINATURA - agora com margin-top: auto */
         .signature-block {
-            margin-top: auto;          /* empurra para o final */
+            margin-top: auto;  /* empurra para o final */
             padding-top: 25px;
             text-align: center;
             border-top: 1px dashed #d0d8e0;
         }
-
         .signature-line {
             width: 280px;
             height: 2px;
@@ -150,7 +121,6 @@
             margin: 0 auto 8px auto;
             border-radius: 4px;
         }
-
         .signature-label {
             font-size: 13px;
             font-weight: 600;
@@ -162,7 +132,7 @@
         .btn-generate {
             margin-top: 35px;
             width: 100%;
-            padding: 16px 20px;
+            padding: 16px;
             background: #0b1a2e;
             color: white;
             border: none;
@@ -170,284 +140,227 @@
             font-size: 18px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.25s;
-            box-shadow: 0 8px 24px rgba(11, 26, 46, 0.25);
+            box-shadow: 0 8px 24px rgba(11,26,46,0.25);
         }
-
         .btn-generate:hover {
             background: #142c47;
             transform: scale(1.01);
-            box-shadow: 0 12px 34px rgba(11, 26, 46, 0.35);
         }
 
-        /* --- CONFIGURAÇÃO PARA IMPRESSÃO (PDF) --- */
+        /* CONFIGURAÇÃO PARA IMPRESSÃO (PDF) */
         @media print {
-            body {
-                background: white !important;
-                padding: 0;
-                margin: 0;
-            }
+            body { background: white; padding: 0; margin: 0; }
             .main-card {
                 box-shadow: none;
                 border-radius: 0;
-                padding: 25px 35px 20px 35px;
+                padding: 25px 35px 15px 35px;
                 max-width: 100%;
                 border: none;
-                height: 100vh;           /* ocupa toda a altura */
+                height: 100vh;          /* altura total da página */
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between; /* empurra assinatura para baixo */
             }
-            .btn-generate {
-                display: none !important;
-            }
-            .field-row input,
-            .field-row textarea {
+            .btn-generate { display: none; }
+            .field-row input, .field-row textarea {
                 border: 1px solid #aaa;
                 background: white;
-                box-shadow: none;
             }
-            .header .badge {
-                display: none;
-            }
+            .badge { display: none; }
             .signature-block {
                 margin-top: 0;
-                padding-top: 30px;
+                padding-top: 20px;
                 border-top: 1px dashed #999;
             }
-            /* espaço extra para carimbo */
             .signature-block::after {
                 content: "";
                 display: block;
-                height: 60px;
+                height: 50px; /* espaço para carimbo */
             }
         }
 
         @media (max-width: 650px) {
-            .main-card {
-                padding: 22px 18px;
-                min-height: auto;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .header h1 {
-                font-size: 22px;
-            }
-            .field-row {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 5px;
-            }
-            .field-row label {
-                width: 100%;
-                font-size: 13px;
-            }
-            .field-row input,
-            .field-row textarea {
-                font-size: 16px;
-                padding: 11px 14px;
-            }
-            .formal-declaration {
-                padding: 14px;
-                font-size: 14px;
-            }
-            .signature-line {
-                width: 200px;
-            }
-            .btn-generate {
-                font-size: 16px;
-                padding: 14px;
-            }
+            .main-card { padding: 20px; min-height: auto; }
+            .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .header h1 { font-size: 22px; }
+            .field-row { flex-direction: column; align-items: stretch; gap: 5px; }
+            .field-row label { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-card" id="receipt-container">
-        <div class="header">
-            <h1>Recibo <span>PDF</span></h1>
-            <span class="badge">Comprovante digital</span>
-        </div>
+<div class="main-card" id="receipt-container">
+    <div class="header">
+        <h1>Recibo <span>PDF</span></h1>
+        <span class="badge">Comprovante digital</span>
+    </div>
 
-        <div class="form-grid">
-            <div class="field-row">
-                <label>Recebido de (Nome / Razão Social):</label>
-                <input type="text" id="nomePagador" placeholder="Nome completo ou razão social do pagador">
-            </div>
-            <div class="field-row">
-                <label>CPF / CNPJ (pagador):</label>
-                <input type="text" id="cpfPagador" placeholder="CPF ou CNPJ" maxlength="18">
-            </div>
-            <div class="field-row">
-                <label>Valor pago (R$):</label>
-                <input type="text" id="valor" placeholder="0,00" value="0,00">
-            </div>
-            <div class="field-row">
-                <label>Referente a:</label>
-                <input type="text" id="referente" placeholder="Descrição da obrigação">
-            </div>
-            <div class="field-row">
-                <label>Data do pagamento:</label>
-                <input type="date" id="dataPagamento">
-            </div>
-            <div class="field-row">
-                <label>Emitente (Nome / Razão Social):</label>
-                <input type="text" id="meuNome" placeholder="Nome ou razão social de quem emite">
-            </div>
-            <div class="field-row">
-                <label>CPF / CNPJ (emitente):</label>
-                <input type="text" id="meuCpf" placeholder="CPF ou CNPJ" maxlength="18">
-            </div>
+    <div class="form-grid">
+        <div class="field-row">
+            <label>Recebido de (Nome / Razão Social):</label>
+            <input type="text" id="nomePagador" placeholder="Nome completo ou razão social do pagador">
         </div>
-
-        <div class="formal-declaration">
-            <strong>Declaração:</strong> Para os devidos fins, declaro que recebi o valor supra mencionado, 
-            referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
+        <div class="field-row">
+            <label>CPF / CNPJ (pagador):</label>
+            <input type="text" id="cpfPagador" placeholder="CPF ou CNPJ" maxlength="18">
         </div>
-
-        <!-- Assinatura com margin-top: auto -->
-        <div class="signature-block">
-            <div class="signature-line"></div>
-            <span class="signature-label">Assinatura do emitente</span>
+        <div class="field-row">
+            <label>Valor pago (R$):</label>
+            <input type="text" id="valor" placeholder="0,00" value="0,00">
+        </div>
+        <div class="field-row">
+            <label>Referente a:</label>
+            <input type="text" id="referente" placeholder="Descrição da obrigação">
+        </div>
+        <div class="field-row">
+            <label>Data do pagamento:</label>
+            <input type="date" id="dataPagamento">
+        </div>
+        <div class="field-row">
+            <label>Emitente (Nome / Razão Social):</label>
+            <input type="text" id="meuNome" placeholder="Nome ou razão social de quem emite">
+        </div>
+        <div class="field-row">
+            <label>CPF / CNPJ (emitente):</label>
+            <input type="text" id="meuCpf" placeholder="CPF ou CNPJ" maxlength="18">
         </div>
     </div>
 
-    <button class="btn-generate" onclick="gerarEAbrirPDF()">Gerar recibo</button>
+    <div class="formal-declaration">
+        <strong>Declaração:</strong> Para os devidos fins, declaro que recebi o valor supra mencionado, 
+        referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
-    </script>
+    <div class="signature-block">
+        <div class="signature-line"></div>
+        <span class="signature-label">Assinatura do emitente</span>
+    </div>
+</div>
 
-    <script>
-        // Força o título da página (para o alerta)
-        document.title = "Gerador de Recibos";
+<button class="btn-generate" onclick="gerarEAbrirPDF()">Gerar recibo</button>
 
-        // ========== MÁSCARA E VALIDAÇÃO ==========
-        function aplicarMascaraCPF_CNPJ(campo) {
-            let valor = campo.value.replace(/\D/g, '');
-            if (valor.length <= 11) {
-                valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            } else {
-                valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
-                valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
-                valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
-            }
-            campo.value = valor;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    // Forçar título para os alertas
+    document.title = "Gerador de Recibos";
+
+    // Máscara e validação
+    function aplicarMascaraCPF_CNPJ(campo) {
+        let valor = campo.value.replace(/\D/g, '');
+        if (valor.length <= 11) {
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        } else {
+            valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
+            valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
         }
+        campo.value = valor;
+    }
 
-        function validarCPF_CNPJ(valor) {
-            const numeros = valor.replace(/\D/g, '');
-            if (numeros.length === 0) return true;
-            if (numeros.length === 11) {
-                if (/^(\d)\1{10}$/.test(numeros)) return false;
-                let soma = 0;
-                for (let i = 0; i < 9; i++) soma += parseInt(numeros.charAt(i)) * (10 - i);
-                let resto = 11 - (soma % 11);
-                let digito1 = (resto >= 10) ? 0 : resto;
-                if (parseInt(numeros.charAt(9)) !== digito1) return false;
-                soma = 0;
-                for (let i = 0; i < 10; i++) soma += parseInt(numeros.charAt(i)) * (11 - i);
-                resto = 11 - (soma % 11);
-                let digito2 = (resto >= 10) ? 0 : resto;
-                return parseInt(numeros.charAt(10)) === digito2;
-            } else if (numeros.length === 14) {
-                if (/^(\d)\1{13}$/.test(numeros)) return false;
-                let tamanho = 12;
-                let soma = 0;
-                for (let i = 0; i < tamanho; i++) soma += parseInt(numeros.charAt(i)) * (tamanho - i + 1);
-                let resto = soma % 11;
-                let digito1 = (resto < 2) ? 0 : 11 - resto;
-                if (parseInt(numeros.charAt(12)) !== digito1) return false;
-                tamanho = 13;
-                soma = 0;
-                for (let i = 0; i < tamanho; i++) soma += parseInt(numeros.charAt(i)) * (tamanho - i + 1);
-                resto = soma % 11;
-                let digito2 = (resto < 2) ? 0 : 11 - resto;
-                return parseInt(numeros.charAt(13)) === digito2;
-            }
-            return false;
+    function validarCPF_CNPJ(valor) {
+        const numeros = valor.replace(/\D/g, '');
+        if (numeros.length === 0) return true;
+        if (numeros.length === 11) {
+            if (/^(\d)\1{10}$/.test(numeros)) return false;
+            let soma = 0;
+            for (let i=0; i<9; i++) soma += parseInt(numeros.charAt(i)) * (10 - i);
+            let resto = 11 - (soma % 11);
+            let digito1 = (resto >= 10) ? 0 : resto;
+            if (parseInt(numeros.charAt(9)) !== digito1) return false;
+            soma = 0;
+            for (let i=0; i<10; i++) soma += parseInt(numeros.charAt(i)) * (11 - i);
+            resto = 11 - (soma % 11);
+            let digito2 = (resto >= 10) ? 0 : resto;
+            return parseInt(numeros.charAt(10)) === digito2;
+        } else if (numeros.length === 14) {
+            if (/^(\d)\1{13}$/.test(numeros)) return false;
+            let tamanho = 12, soma = 0;
+            for (let i=0; i<tamanho; i++) soma += parseInt(numeros.charAt(i)) * (tamanho - i + 1);
+            let resto = soma % 11;
+            let digito1 = (resto < 2) ? 0 : 11 - resto;
+            if (parseInt(numeros.charAt(12)) !== digito1) return false;
+            tamanho = 13; soma = 0;
+            for (let i=0; i<tamanho; i++) soma += parseInt(numeros.charAt(i)) * (tamanho - i + 1);
+            resto = soma % 11;
+            let digito2 = (resto < 2) ? 0 : 11 - resto;
+            return parseInt(numeros.charAt(13)) === digito2;
         }
+        return false;
+    }
 
-        // ========== INICIALIZAÇÃO ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            const hoje = new Date().toISOString().split('T')[0];
-            document.getElementById('dataPagamento').value = hoje;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Data atual
+        document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
 
-            const campos = ['cpfPagador', 'meuCpf'];
-            campos.forEach(id => {
-                const campo = document.getElementById(id);
-                campo.addEventListener('input', function() {
-                    aplicarMascaraCPF_CNPJ(this);
-                });
-                campo.addEventListener('blur', function() {
-                    const val = this.value.trim();
-                    if (val !== '' && !validarCPF_CNPJ(val)) {
-                        alert('O documento informado não é válido. Verifique o CPF ou CNPJ digitado.');
-                        // Não forçamos foco para evitar loop
-                    }
-                });
+        // Máscara e validação (sem loop)
+        const campos = ['cpfPagador', 'meuCpf'];
+        campos.forEach(id => {
+            const campo = document.getElementById(id);
+            campo.addEventListener('input', function() {
+                aplicarMascaraCPF_CNPJ(this);
             });
-
-            const valorInput = document.getElementById('valor');
-            valorInput.addEventListener('blur', function() {
-                let v = this.value.replace(',', '.').replace(/[^0-9.]/g, '');
-                let num = parseFloat(v);
-                if (isNaN(num)) {
-                    this.value = '0,00';
-                } else {
-                    this.value = num.toFixed(2).replace('.', ',');
+            campo.addEventListener('blur', function() {
+                const val = this.value.trim();
+                if (val !== '' && !validarCPF_CNPJ(val)) {
+                    alert('O documento informado não é válido. Verifique o CPF ou CNPJ digitado.');
                 }
             });
         });
 
-        // ========== GERAR PDF ==========
-        function gerarEAbrirPDF() {
-            // Validação final
-            const campos = ['cpfPagador', 'meuCpf'];
-            for (let id of campos) {
-                const campo = document.getElementById(id);
-                const val = campo.value.trim();
-                if (val !== '' && !validarCPF_CNPJ(val)) {
-                    alert('O documento informado não é válido. Corrija o CPF ou CNPJ antes de gerar o recibo.');
-                    return;
-                }
+        // Formatação do valor
+        document.getElementById('valor').addEventListener('blur', function() {
+            let v = this.value.replace(',', '.').replace(/[^0-9.]/g, '');
+            let num = parseFloat(v);
+            this.value = isNaN(num) ? '0,00' : num.toFixed(2).replace('.', ',');
+        });
+    });
+
+    // Gerar PDF
+    function gerarEAbrirPDF() {
+        // Validação final
+        const campos = ['cpfPagador', 'meuCpf'];
+        for (let id of campos) {
+            const campo = document.getElementById(id);
+            const val = campo.value.trim();
+            if (val !== '' && !validarCPF_CNPJ(val)) {
+                alert('O documento informado não é válido. Corrija o CPF ou CNPJ antes de gerar o recibo.');
+                return;
             }
-
-            const element = document.getElementById('receipt-container');
-            const opt = {
-                margin: [0.6, 0.6, 0.6, 0.6],
-                filename: 'recibo_oficial.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2.5, letterRendering: true, useCORS: true, logging: false },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).outputPdf('blob').then(function(blob) {
-                const url = URL.createObjectURL(blob);
-                const novaAba = window.open(url, '_blank');
-                if (!novaAba || novaAba.closed || typeof novaAba.closed == 'undefined') {
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'recibo_oficial.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    setTimeout(() => URL.revokeObjectURL(url), 5000);
-                } else {
-                    setTimeout(() => URL.revokeObjectURL(url), 10000);
-                }
-            }).catch(function(error) {
-                console.error('Erro ao gerar PDF:', error);
-                alert('Ocorreu um erro ao gerar o PDF. Tente novamente.');
-            });
         }
-    </script>
 
+        const element = document.getElementById('receipt-container');
+        const opt = {
+            margin: [0.6, 0.6, 0.6, 0.6],
+            filename: 'recibo_oficial.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2.5, letterRendering: true, useCORS: true, logging: false },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).outputPdf('blob').then(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const novaAba = window.open(url, '_blank');
+            if (!novaAba || novaAba.closed) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'recibo_oficial.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 5000);
+            } else {
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
+            }
+        }).catch(function(err) {
+            console.error(err);
+            alert('Erro ao gerar PDF. Tente novamente.');
+        });
+    }
+</script>
 </body>
 </html>
