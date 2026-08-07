@@ -6,7 +6,8 @@
 <title>Gerador de Recibos</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
+html, body {
+    height: 100%;
     background: #e9edf3;
     display: flex;
     flex-direction: column;
@@ -14,7 +15,6 @@ body {
     justify-content: center;
     padding: 20px;
     font-family: 'Inter', sans-serif;
-    min-height: 100vh;
 }
 .main-card {
     background: white;
@@ -22,9 +22,11 @@ body {
     max-width: 780px;
     border-radius: 28px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    padding: 40px 45px 20px 45px; /* reduzido o padding inferior */
+    padding: 40px 45px 30px 45px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;          /* ocupa toda a altura da viewport */
     position: relative;
-    min-height: 700px;
 }
 .header {
     display: flex;
@@ -71,18 +73,19 @@ body {
     text-align: justify;
 }
 
-/* --- ASSINATURA SEM LINHA, QUASE NO RODAPÉ --- */
+/* --- ASSINATURA NO FINAL DA PÁGINA (flex) --- */
 .signature-block {
-    position: absolute;
-    bottom: 5px;           /* colado no fundo */
-    left: 45px;
-    right: 45px;
+    margin-top: auto;          /* empurra para o final */
     text-align: center;
-    padding-top: 5px;      /* pouco espaço interno */
-    background: white;     /* para tampar o fundo */
+    padding-top: 20px;
+    background: white;         /* para não transparecer */
 }
 .signature-line {
-    display: none;         /* removida a linha */
+    width: 280px;
+    height: 2px;
+    background: #1e3a5f;
+    margin: 0 auto 8px auto;
+    border-radius: 4px;
 }
 .signature-label {
     font-size: 13px;
@@ -93,7 +96,7 @@ body {
 }
 
 .btn-generate {
-    margin-top: 35px;
+    margin-top: 20px;
     width: 100%;
     padding: 16px;
     background: #0b1a2e;
@@ -104,12 +107,14 @@ body {
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 8px 24px rgba(11,26,46,0.25);
+    max-width: 780px;
 }
 .btn-generate:hover { background: #142c47; transform: scale(1.01); }
 
 /* ========== CONFIGURAÇÃO PARA IMPRESSÃO (PDF) ========== */
 @media print {
-    body {
+    html, body {
+        height: 100%;
         background: white;
         padding: 0;
         margin: 0;
@@ -117,12 +122,13 @@ body {
     .main-card {
         box-shadow: none;
         border-radius: 0;
-        padding: 25px 35px 10px 35px; /* padding inferior mínimo */
+        padding: 25px 35px 30px 35px;
         max-width: 100%;
         border: none;
-        height: 100vh;
-        min-height: 100vh;
-        position: relative;
+        height: 100%;           /* ocupa a página inteira */
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     .btn-generate { display: none !important; }
     .field-row input, .field-row textarea {
@@ -132,28 +138,18 @@ body {
     }
     .badge { display: none; }
     .signature-block {
-        position: absolute;
-        bottom: 5px;           /* colado no fundo */
-        left: 35px;
-        right: 35px;
-        padding-top: 5px;
+        margin-top: auto;
         background: white;
-    }
-    .signature-line { display: none; }
-    .signature-block::after {
-        content: "";
-        display: block;
-        height: 20px;         /* pequeno espaço para carimbo */
     }
 }
 
 @media (max-width: 650px) {
-    .main-card { padding: 20px 20px 15px 20px; min-height: auto; }
+    .main-card { padding: 20px 20px 20px 20px; min-height: auto; }
     .header { flex-direction: column; align-items: flex-start; gap: 8px; }
     .header h1 { font-size: 22px; }
     .field-row { flex-direction: column; align-items: stretch; gap: 5px; }
     .field-row label { width: 100%; }
-    .signature-block { left: 20px; right: 20px; bottom: 5px; }
+    .btn-generate { max-width: 100%; }
 }
 
 /* ========== MODAL ========== */
@@ -236,8 +232,9 @@ body {
         referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
     </div>
 
-    <!-- Assinatura sem linha, colada no rodapé -->
+    <!-- Assinatura agora empurrada pelo margin-top:auto -->
     <div class="signature-block">
+        <div class="signature-line"></div>
         <span class="signature-label">Assinatura do emitente</span>
     </div>
 </div>
@@ -332,7 +329,7 @@ function gerarEAbrirPDF() {
     }
     const element = document.getElementById('receipt-container');
     const opt = {
-        margin: [0.4, 0.4, 0.4, 0.4], // margens menores
+        margin: [0.6, 0.6, 0.6, 0.6],
         filename: 'recibo_oficial.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2.5, letterRendering: true, useCORS: true, logging: false },
