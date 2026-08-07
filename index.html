@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerador de Recibos</title>
     <style>
-        /* Reset */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -22,21 +21,18 @@
             min-height: 100vh;
         }
 
-        /* Container principal com flex column e altura mínima */
+        /* Container principal com position relative para a assinatura absoluta */
         .main-card {
             background: white;
             width: 100%;
             max-width: 780px;
             border-radius: 28px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            padding: 40px 45px 20px 45px;
-            display: flex;
-            flex-direction: column;
-            min-height: 650px;   /* altura mínima para dar espaço */
-            /* No PDF, será substituído por height: 100vh */
+            padding: 40px 45px 100px 45px; /* padding inferior extra para não sobrepor a assinatura */
+            position: relative; /* necessário para a assinatura absoluta */
+            min-height: 650px;
         }
 
-        /* Cabeçalho */
         .header {
             display: flex;
             justify-content: space-between;
@@ -44,7 +40,6 @@
             border-bottom: 2px solid #eef2f6;
             padding-bottom: 18px;
             margin-bottom: 28px;
-            flex-shrink: 0;
         }
         .header h1 {
             font-size: 26px;
@@ -68,12 +63,10 @@
             font-weight: 600;
         }
 
-        /* Formulário */
         .form-grid {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            flex-shrink: 0;  /* não encolhe */
         }
         .field-row {
             display: flex;
@@ -110,7 +103,6 @@
             box-shadow: 0 0 0 4px rgba(30,58,95,0.08);
         }
 
-        /* Declaração */
         .formal-declaration {
             margin: 18px 0 12px 0;
             padding: 16px 22px;
@@ -122,22 +114,18 @@
             font-size: 15px;
             line-height: 1.6;
             text-align: justify;
-            flex-shrink: 0;
         }
 
-        /* --- BLOCO INVISÍVEL PARA EMPURRAR A ASSINATURA --- */
-        .spacer {
-            flex: 1;            /* ocupa todo o espaço disponível */
-            min-height: 20px;   /* garante que exista */
-        }
-
-        /* Assinatura */
+        /* --- ASSINATURA FIXA NO RODAPÉ (ABSOLUTA) --- */
         .signature-block {
-            margin-top: 10px;
-            padding-top: 20px;
+            position: absolute;
+            bottom: 20px;          /* distância do fundo */
+            left: 45px;
+            right: 45px;
             text-align: center;
+            padding-top: 15px;
             border-top: 1px dashed #d0d8e0;
-            flex-shrink: 0;     /* não encolhe */
+            background: white;     /* para não transparente */
         }
         .signature-line {
             width: 280px;
@@ -154,7 +142,6 @@
             letter-spacing: 1.5px;
         }
 
-        /* Botão */
         .btn-generate {
             margin-top: 35px;
             width: 100%;
@@ -173,7 +160,7 @@
             transform: scale(1.01);
         }
 
-        /* ========== CONFIGURAÇÃO PARA IMPRESSÃO (PDF) ========== */
+        /* ========== ESTILOS PARA IMPRESSÃO (PDF) ========== */
         @media print {
             body {
                 background: white;
@@ -183,14 +170,12 @@
             .main-card {
                 box-shadow: none;
                 border-radius: 0;
-                padding: 25px 35px 20px 35px;
+                padding: 25px 35px 80px 35px; /* padding inferior para a assinatura */
                 max-width: 100%;
                 border: none;
                 height: 100vh;            /* ocupa toda a página */
                 min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between; /* empurra tudo para as pontas */
+                position: relative;       /* mantém a referência para absolute */
             }
             .btn-generate {
                 display: none !important;
@@ -204,27 +189,26 @@
             .badge {
                 display: none;
             }
-            .spacer {
-                flex: 1;                /* ocupa o máximo de espaço */
-                min-height: 40px;       /* garante espaço */
-            }
             .signature-block {
-                margin-top: 0;
-                padding-top: 20px;
+                position: absolute;
+                bottom: 25px;            /* fixo no rodapé */
+                left: 35px;
+                right: 35px;
                 border-top: 1px dashed #999;
+                background: white;
             }
             .signature-block::after {
                 content: "";
                 display: block;
-                height: 50px;           /* espaço extra para carimbo */
+                height: 40px;            /* espaço extra para carimbo */
             }
         }
 
-        /* Responsivo */
         @media (max-width: 650px) {
             .main-card {
-                padding: 20px;
+                padding: 20px 20px 100px 20px;
                 min-height: auto;
+                position: relative;
             }
             .header {
                 flex-direction: column;
@@ -242,8 +226,10 @@
             .field-row label {
                 width: 100%;
             }
-            .spacer {
-                min-height: 10px;
+            .signature-block {
+                left: 20px;
+                right: 20px;
+                bottom: 15px;
             }
         }
 
@@ -351,10 +337,7 @@
         referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
     </div>
 
-    <!-- BLOCO INVISÍVEL (spacer) para empurrar a assinatura para baixo -->
-    <div class="spacer"></div>
-
-    <!-- Assinatura -->
+    <!-- ASSINATURA FIXA NO RODAPÉ (position: absolute) -->
     <div class="signature-block">
         <div class="signature-line"></div>
         <span class="signature-label">Assinatura do emitente</span>
@@ -422,7 +405,6 @@
         return false;
     }
 
-    // ========== INICIALIZAÇÃO ==========
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
 
