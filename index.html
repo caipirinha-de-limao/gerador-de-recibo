@@ -13,7 +13,8 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    /* padding proporcional à tela: nunca cola na borda, e cresce em monitores grandes */
+    padding: clamp(20px, 4vh, 64px) clamp(20px, 4vw, 64px);
     font-family: 'Inter', sans-serif;
 }
 .main-card {
@@ -22,10 +23,14 @@ html, body {
     max-width: 780px;
     border-radius: 28px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    padding: 40px 45px 30px 45px;
+    /* padding também escala com a tela */
+    padding: clamp(28px, 4vh, 45px) clamp(28px, 4vw, 45px) clamp(24px, 3vh, 35px);
     display: flex;
     flex-direction: column;
-    min-height: 90vh;          /* menos que 100vh para evitar corte no topo */
+    /* altura se adapta à resolução da tela: não estica demais em monitores grandes,
+       nem fica pequena em telas menores; sempre sobra espaço para a assinatura */
+    min-height: min(80vh, 820px);
+    max-height: 92vh;
     position: relative;
 }
 .header {
@@ -39,7 +44,6 @@ html, body {
 .header h1 { font-size: 26px; font-weight: 700; color: #0b1a2e; }
 .header h1 span { background: #0b1a2e; color: white; padding: 2px 14px; border-radius: 40px; font-size: 18px; font-weight: 600; }
 .badge { background: #e8edf3; color: #1e3a5f; padding: 6px 18px; border-radius: 40px; font-size: 13px; font-weight: 600; }
-
 .form-grid { display: flex; flex-direction: column; gap: 16px; }
 .field-row { display: flex; align-items: center; gap: 16px; }
 .field-row label { width: 200px; font-weight: 600; font-size: 14px; color: #1e2a3a; flex-shrink: 0; }
@@ -59,7 +63,6 @@ html, body {
     border-color: #1e3a5f;
     box-shadow: 0 0 0 4px rgba(30,58,95,0.08);
 }
-
 .formal-declaration {
     margin: 18px 0 12px 0;
     padding: 16px 22px;
@@ -72,13 +75,14 @@ html, body {
     line-height: 1.6;
     text-align: justify;
 }
-
 /* --- ASSINATURA NO FINAL DA PÁGINA (flex) --- */
 .signature-block {
     margin-top: auto;
     text-align: center;
-    padding-top: 20px;
+    /* espaço reservado para a assinatura também escala com a altura da tela */
+    padding-top: clamp(20px, 4vh, 40px);
     background: white;
+    flex-shrink: 0;
 }
 .signature-line {
     width: 280px;
@@ -94,9 +98,9 @@ html, body {
     text-transform: uppercase;
     letter-spacing: 1.5px;
 }
-
 .btn-generate {
-    margin: 20px 0 40px 0;      /* margem inferior para não colar na borda */
+    /* margens (topo/rodapé) também proporcionais à tela, nunca coladas na borda */
+    margin: clamp(16px, 3vh, 24px) 0 clamp(24px, 5vh, 48px) 0;
     padding: 16px;
     width: 100%;
     max-width: 780px;
@@ -110,7 +114,6 @@ html, body {
     box-shadow: 0 8px 24px rgba(11,26,46,0.25);
 }
 .btn-generate:hover { background: #142c47; transform: scale(1.01); }
-
 /* ========== CONFIGURAÇÃO PARA IMPRESSÃO (PDF) ========== */
 @media print {
     html, body {
@@ -127,20 +130,19 @@ html, body {
         border: none;
         height: 100%;
         min-height: 0;
+        max-height: none;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
     }
     .btn-generate { display: none !important; }
     .badge { display: none; }
-
     .header {
         padding-bottom: 10px;
         margin-bottom: 12px;
     }
     .header h1 { font-size: 22px; }
     .header h1 span { font-size: 15px; padding: 0 10px; }
-
     .form-grid { gap: 6px; }
     .field-row { gap: 8px; }
     .field-row label {
@@ -156,7 +158,6 @@ html, body {
         box-shadow: none;
     }
     .field-row input[type="date"] { font-size: 12px; }
-
     .formal-declaration {
         margin: 8px 0 6px 0;
         padding: 8px 14px;
@@ -164,7 +165,6 @@ html, body {
         line-height: 1.4;
         border-left-width: 3px;
     }
-
     .signature-block {
         margin-top: auto;
         padding-top: 10px;
@@ -178,16 +178,14 @@ html, body {
         letter-spacing: 1px;
     }
 }
-
 @media (max-width: 650px) {
-    .main-card { padding: 20px; min-height: auto; }
+    .main-card { padding: 20px; min-height: auto; max-height: none; }
     .header { flex-direction: column; align-items: flex-start; gap: 8px; }
     .header h1 { font-size: 22px; }
     .field-row { flex-direction: column; align-items: stretch; gap: 5px; }
     .field-row label { width: 100%; }
     .btn-generate { max-width: 100%; margin-bottom: 20px; }
 }
-
 /* ========== MODAL ========== */
 .modal-overlay {
     position: fixed;
@@ -215,7 +213,6 @@ html, body {
 </style>
 </head>
 <body>
-
 <!-- Modal -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-box">
@@ -224,14 +221,12 @@ html, body {
         <button onclick="fecharModal()">OK</button>
     </div>
 </div>
-
 <!-- Container principal -->
 <div class="main-card" id="receipt-container">
     <div class="header">
         <h1>Recibo <span>PDF</span></h1>
         <span class="badge">Comprovante digital</span>
     </div>
-
     <div class="form-grid">
         <div class="field-row">
             <label>Recebido de (Nome / Razão Social):</label>
@@ -262,21 +257,17 @@ html, body {
             <input type="text" id="meuCpf" placeholder="CPF ou CNPJ" maxlength="18">
         </div>
     </div>
-
     <div class="formal-declaration">
         <strong>Declaração:</strong> Para os devidos fins, declaro que recebi o valor supra mencionado, 
         referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
     </div>
-
     <!-- Assinatura no final -->
     <div class="signature-block">
         <div class="signature-line"></div>
         <span class="signature-label">Assinatura do emitente</span>
     </div>
 </div>
-
 <button class="btn-generate" onclick="gerarEAbrirPDF()">Gerar recibo</button>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 function mostrarModal(mensagem) {
@@ -286,7 +277,6 @@ function mostrarModal(mensagem) {
 function fecharModal() {
     document.getElementById('modalOverlay').style.display = 'none';
 }
-
 function aplicarMascaraCPF_CNPJ(campo) {
     let valor = campo.value.replace(/\D/g, '');
     if (valor.length <= 11) {
@@ -301,7 +291,6 @@ function aplicarMascaraCPF_CNPJ(campo) {
     }
     campo.value = valor;
 }
-
 function validarCPF_CNPJ(valor) {
     const numeros = valor.replace(/\D/g, '');
     if (numeros.length === 0) return true;
@@ -332,7 +321,6 @@ function validarCPF_CNPJ(valor) {
     }
     return false;
 }
-
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
     const campos = ['cpfPagador', 'meuCpf'];
@@ -352,7 +340,6 @@ document.addEventListener('DOMContentLoaded', function() {
         this.value = isNaN(num) ? '0,00' : num.toFixed(2).replace('.', ',');
     });
 });
-
 function gerarEAbrirPDF() {
     const campos = ['cpfPagador', 'meuCpf'];
     for (let id of campos) {
