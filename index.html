@@ -13,7 +13,6 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* padding proporcional à tela: nunca cola na borda, e cresce em monitores grandes */
     padding: clamp(20px, 4vh, 64px) clamp(20px, 4vw, 64px);
     font-family: 'Inter', sans-serif;
 }
@@ -23,12 +22,9 @@ html, body {
     max-width: 780px;
     border-radius: 28px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    /* padding também escala com a tela */
     padding: clamp(28px, 4vh, 45px) clamp(28px, 4vw, 45px) clamp(24px, 3vh, 35px);
     display: flex;
     flex-direction: column;
-    /* altura se adapta à resolução da tela: não estica demais em monitores grandes,
-       nem fica pequena em telas menores; sempre sobra espaço para a assinatura */
     min-height: min(80vh, 820px);
     max-height: 92vh;
     position: relative;
@@ -57,7 +53,6 @@ html, body {
     background: #fafcfe;
     transition: 0.2s;
 }
-.field-row input[type="date"] { font-family: 'Inter', sans-serif; font-size: 15px; color: #0b1a2e; }
 .field-row input:focus, .field-row textarea:focus {
     outline: none;
     border-color: #1e3a5f;
@@ -75,11 +70,9 @@ html, body {
     line-height: 1.6;
     text-align: justify;
 }
-/* --- ASSINATURA NO FINAL DA PÁGINA (flex) --- */
 .signature-block {
     margin-top: auto;
     text-align: center;
-    /* espaço reservado para a assinatura também escala com a altura da tela */
     padding-top: clamp(20px, 4vh, 40px);
     background: white;
     flex-shrink: 0;
@@ -99,7 +92,6 @@ html, body {
     letter-spacing: 1.5px;
 }
 .btn-generate {
-    /* margens (topo/rodapé) também proporcionais à tela, nunca coladas na borda */
     margin: clamp(16px, 3vh, 24px) 0 clamp(24px, 5vh, 48px) 0;
     padding: 16px;
     width: 100%;
@@ -114,7 +106,6 @@ html, body {
     box-shadow: 0 8px 24px rgba(11,26,46,0.25);
 }
 .btn-generate:hover { background: #142c47; transform: scale(1.01); }
-/* ========== CONFIGURAÇÃO PARA IMPRESSÃO (PDF) ========== */
 @media print {
     html, body {
         height: 100%;
@@ -125,7 +116,7 @@ html, body {
     .main-card {
         box-shadow: none;
         border-radius: 0;
-        padding: 8px 25px 8px 25px;   /* reduzido ao máximo para caber */
+        padding: 8px 25px 8px 25px;
         max-width: 100%;
         border: none;
         height: 100%;
@@ -157,7 +148,6 @@ html, body {
         background: white;
         box-shadow: none;
     }
-    .field-row input[type="date"] { font-size: 12px; }
     .formal-declaration {
         margin: 8px 0 6px 0;
         padding: 8px 14px;
@@ -186,7 +176,6 @@ html, body {
     .field-row label { width: 100%; }
     .btn-generate { max-width: 100%; margin-bottom: 20px; }
 }
-/* ========== MODAL ========== */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -213,7 +202,6 @@ html, body {
 </style>
 </head>
 <body>
-<!-- Modal -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-box">
         <h3 id="modalTitle">Aviso</h3>
@@ -221,7 +209,6 @@ html, body {
         <button onclick="fecharModal()">OK</button>
     </div>
 </div>
-<!-- Container principal -->
 <div class="main-card" id="receipt-container">
     <div class="header">
         <h1>Recibo <span>PDF</span></h1>
@@ -246,7 +233,7 @@ html, body {
         </div>
         <div class="field-row">
             <label>Data do pagamento:</label>
-            <input type="date" id="dataPagamento">
+            <input type="text" id="dataPagamento" placeholder="dd/mm/aaaa" maxlength="10">
         </div>
         <div class="field-row">
             <label>Recebedor (Nome / Razão Social):</label>
@@ -261,7 +248,6 @@ html, body {
         <strong>Declaração:</strong> Para os devidos fins, declaro que recebi o valor supra mencionado, 
         referente à obrigação discriminada neste recibo, dando plena e irrevogável quitação.
     </div>
-    <!-- Assinatura no final -->
     <div class="signature-block">
         <div class="signature-line"></div>
         <span class="signature-label">Assinatura do emitente</span>
@@ -289,6 +275,13 @@ function aplicarMascaraCPF_CNPJ(campo) {
         valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
         valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
     }
+    campo.value = valor;
+}
+function aplicarMascaraData(campo) {
+    let valor = campo.value.replace(/\D/g, '');
+    valor = valor.substring(0, 8);
+    valor = valor.replace(/(\d{2})(\d)/, '$1/$2');
+    valor = valor.replace(/(\d{2})(\d)/, '$1/$2');
     campo.value = valor;
 }
 function validarCPF_CNPJ(valor) {
@@ -322,7 +315,12 @@ function validarCPF_CNPJ(valor) {
     return false;
 }
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('dataPagamento').value = new Date().toISOString().split('T')[0];
+    const hoje = new Date();
+    const dia = String(hoje.getDate()).padStart(2, '0');
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const ano = hoje.getFullYear();
+    document.getElementById('dataPagamento').value = `${dia}/${mes}/${ano}`;
+    document.getElementById('dataPagamento').addEventListener('input', function() { aplicarMascaraData(this); });
     const campos = ['cpfPagador', 'meuCpf'];
     campos.forEach(id => {
         const campo = document.getElementById(id);
@@ -352,7 +350,7 @@ function gerarEAbrirPDF() {
     }
     const element = document.getElementById('receipt-container');
     const opt = {
-        margin: [0.5, 0.5, 0.5, 0.5],   // margens reduzidas para aproveitar espaço
+        margin: [0.5, 0.5, 0.5, 0.5],
         filename: 'recibo_oficial.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
