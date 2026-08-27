@@ -22,12 +22,20 @@ html, body {
     max-width: 780px;
     border-radius: 28px;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    padding: clamp(28px, 4vh, 45px) clamp(28px, 4vw, 45px) clamp(24px, 3vh, 35px);
+    padding: clamp(28px, 4vh, 45px) clamp(28px, 4vw, 45px) clamp(8px, 1.2vh, 14px);
     display: flex;
     flex-direction: column;
     min-height: min(80vh, 820px);
     max-height: 92vh;
     position: relative;
+}
+.main-card.pdf-export {
+    width: 698px;
+    max-width: 698px;
+    min-height: 0;
+    max-height: none;
+    height: 1026px;
+    box-shadow: none;
 }
 .header {
     display: flex;
@@ -112,6 +120,8 @@ html, body {
         background: white;
         padding: 0;
         margin: 0;
+        align-items: stretch;
+        justify-content: flex-start;
     }
     .main-card {
         box-shadow: none;
@@ -250,7 +260,7 @@ html, body {
     </div>
     <div class="signature-block">
         <div class="signature-line"></div>
-        <span class="signature-label">Assinatura do emitente</span>
+        <span class="signature-label">Assinatura do recebedor</span>
     </div>
 </div>
 <button class="btn-generate" onclick="gerarEAbrirPDF()">Gerar recibo</button>
@@ -349,6 +359,7 @@ function gerarEAbrirPDF() {
         }
     }
     const element = document.getElementById('receipt-container');
+    element.classList.add('pdf-export');
     const opt = {
         margin: [0.5, 0.5, 0.5, 0.5],
         filename: 'recibo_oficial.pdf',
@@ -357,6 +368,7 @@ function gerarEAbrirPDF() {
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).outputPdf('blob').then(function(blob) {
+        element.classList.remove('pdf-export');
         const url = URL.createObjectURL(blob);
         const novaAba = window.open(url, '_blank');
         if (!novaAba || novaAba.closed) {
@@ -371,6 +383,7 @@ function gerarEAbrirPDF() {
             setTimeout(() => URL.revokeObjectURL(url), 10000);
         }
     }).catch(function(err) {
+        element.classList.remove('pdf-export');
         console.error(err);
         mostrarModal('Erro ao gerar o PDF. Tente novamente.');
     });
