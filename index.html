@@ -260,7 +260,7 @@ html, body {
     </div>
     <div class="signature-block">
         <div class="signature-line"></div>
-        <span class="signature-label">Assinatura do recebedor</span>
+        <span class="signature-label">Assinatura do emitente</span>
     </div>
 </div>
 <button class="btn-generate" onclick="gerarEAbrirPDF()">Gerar recibo</button>
@@ -293,6 +293,17 @@ function aplicarMascaraData(campo) {
     valor = valor.replace(/(\d{2})(\d)/, '$1/$2');
     valor = valor.replace(/(\d{2})(\d)/, '$1/$2');
     campo.value = valor;
+}
+function validarData(valor) {
+    const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valor);
+    if (!match) return false;
+    const dia = parseInt(match[1], 10);
+    const mes = parseInt(match[2], 10);
+    const ano = parseInt(match[3], 10);
+    if (mes < 1 || mes > 12) return false;
+    const diasNoMes = new Date(ano, mes, 0).getDate();
+    if (dia < 1 || dia > diasNoMes) return false;
+    return true;
 }
 function validarCPF_CNPJ(valor) {
     const numeros = valor.replace(/\D/g, '');
@@ -331,6 +342,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const ano = hoje.getFullYear();
     document.getElementById('dataPagamento').value = `${dia}/${mes}/${ano}`;
     document.getElementById('dataPagamento').addEventListener('input', function() { aplicarMascaraData(this); });
+    document.getElementById('dataPagamento').addEventListener('blur', function() {
+        const val = this.value.trim();
+        if (val !== '' && !validarData(val)) {
+            mostrarModal('A data informada não é válida. Use o formato dd/mm/aaaa.');
+        }
+    });
     const campos = ['cpfPagador', 'meuCpf'];
     campos.forEach(id => {
         const campo = document.getElementById(id);
@@ -349,6 +366,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 function gerarEAbrirPDF() {
+    const dataCampo = document.getElementById('dataPagamento');
+    const dataVal = dataCampo.value.trim();
+    if (dataVal === '' || !validarData(dataVal)) {
+        mostrarModal('A data do pagamento é obrigatória e deve estar no formato dd/mm/aaaa.');
+        return;
+    }
     const campos = ['cpfPagador', 'meuCpf'];
     for (let id of campos) {
         const campo = document.getElementById(id);
